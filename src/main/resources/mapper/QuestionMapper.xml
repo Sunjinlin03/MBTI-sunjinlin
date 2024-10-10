@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qst.mapper.QuestionMapper">
+
+    <select id="find" resultType="com.qst.pojo.Question">
+        select id,assessment_id,user_id,type,title,status,difficulty,hint from questions where assessment_id=#{assessmentId} and status=#{status} and type=#{type} order by id desc
+    </select>
+
+    <select id="find2" resultType="com.qst.pojo.Question">
+        select id,assessment_id,user_id,type,title,status,difficulty,hint from questions order by id desc
+    </select>
+
+    <select id="findById" resultType="com.qst.pojo.Question">
+        select id,assessment_id,user_id,type,title,status,difficulty,hint from questions where id=#{id}
+    </select>
+
+    <select id="findChoices" resultType="com.qst.pojo.Choice">
+        select id,title,hint,checked,question_id from choices where question_id=#{id}
+    </select>
+
+    <select id="findDimensionByQuestion" resultType="com.qst.pojo.PersonalityDimension">
+        select id,title,depict,assessment_id from personality_dimension where id in(select dimension_id from question_dimension where question_id=#{id})
+    </select>
+
+    <delete id="delete">
+        delete from questions where id=#{id}
+    </delete>
+
+    <insert id="insertQuestion" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into questions(title,hint,type,status,difficulty,assessment_id,user_id) values (#{title}, #{hint},#{type},#{status},#{difficulty},#{assessment_id},{user_id})
+    </insert>
+
+    <delete id="detachDimension">
+        delete from question_dimension where question_id=#{id}
+    </delete>
+
+    <insert id="attachDimension">
+        insert into question_dimension(question_id,dimension_id) values (#{question_id},#{dimension_id})
+    </insert>
+
+    <select id="findDimensionId" resultType="Integer">
+        select dimension_id from question_dimension where question_id=#{id}
+    </select>
+
+</mapper>

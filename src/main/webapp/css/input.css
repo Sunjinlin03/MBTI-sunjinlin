@@ -1,0 +1,11 @@
+@CHARSET "UTF-8";
+.edit{
+	text-align: center;
+}
+.edit input{
+	margin-left: 40px;
+}
+textarea{
+	border-radius: 5px;
+	border:2px solid black;
+}

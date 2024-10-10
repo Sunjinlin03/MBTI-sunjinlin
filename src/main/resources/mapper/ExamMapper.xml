@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namspace 指定该mapper文件描述的是那个java接口文件
+    这里填写的是UserDao接口文件的全类名
+-->
+<!-- resultType和resultMap区别：如果是只返回一个返回值（String或int）用resultType就行，列名个和实体类不一致，又不起别名，就用resultMap
+-->
+<mapper namespace="com.qst.mapper.ExamMapper">
+    <sql id = "selectWithExam">
+        id,personnel_id,schedule_id,begin_time,end_time,result
+    </sql>
+    <resultMap id="ExamMap" type="com.qst.pojo.Exam">
+        <id   column="id" property="id"/>
+        <result column="personnel_id" property="studentId"/>
+        <result column="schedule_id" property="scheduleId"/>
+        <result column="begin_time" property="beginTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="result" property="result"/>
+    </resultMap>
+<select id="findByTestPersonnel" resultMap="ExamMap">
+    select * from exams where personnel_id=#{studentId}
+</select>
+
+    <select id="findByTestPersonnelAndSchedule" resultMap="ExamMap">
+        select * from exams where personnel_id=#{studentId} and schedule_id=#{scheduleId}
+    </select>
+
+    <update id="updateExam" parameterType="map">
+        update exams set end_time = #{endTime},result=#{result} where id =#{id}
+    </update>
+
+    <insert id="saveExam" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into exams(
+            personnel_id,
+            schedule_id,
+            begin_time,
+            end_time,
+            result
+        )values(
+            #{studentId}, #{scheduleId}, #{beginTime}, #{endTime}, #{result})
+    </insert>
+</mapper>

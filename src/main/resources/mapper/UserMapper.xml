@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namspace 指定该mapper文件描述的是那个java接口文件
+    这里填写的是UserDao接口文件的全类名
+-->
+<!-- resultType和resultMap区别：如果是只返回一个返回值（String或int）用resultType就行，列名个和实体类不一致，又不起别名，就用resultMap
+-->
+<mapper namespace="com.qst.mapper.UserMapper">
+
+    <!--    这是一个sql块-->
+    <sql id="selectNoLastLogin">
+        id,login,name,passwd,type,status
+    </sql>
+
+    <sql id="selectWithLastLogin">
+        id,login,name,passwd,type,status,last_login
+    </sql>
+
+
+    <!--    column 是数据库的字段，property是java对象的属性-->
+    <resultMap id="bassMap" type="com.qst.pojo.User">
+        <id column="id" property="id"></id>
+        <result column="login" property="login"></result>
+        <result column="name" property="name"></result>
+        <result column="passwd" property="passwd"></result>
+        <result column="type" property="type"></result>
+        <result column="status" property="status"></result>
+        <result column="last_login" property="lastLogin"></result>
+    </resultMap>
+
+    <select id="findAll" resultType="com.qst.pojo.User">
+        select<include refid="selectNoLastLogin"/>from users
+    </select>
+
+
+    <select id="findAllWithlastLogin" resultMap="bassMap">
+        select<include refid="selectWithLastLogin"/>from users
+    </select>
+
+    <select id="findAll2" resultType="com.qst.pojo.User">
+        select
+        <include refid="selectWithLastLogin"/>
+        ,last_login as lastLogin from users
+    </select>
+
+    <select id="findByLogin" resultType="com.qst.pojo.User" parameterType="String">
+        select *
+        from users
+        where login = #{login}
+    </select>
+
+    <select id="findUserById" resultType="com.qst.pojo.User">
+        select *
+        from users
+        where id = #{id}
+    </select>
+
+    <!--    添加,(useGeneratedKeys是否启用Id生成规则并回填ID，keyProperty填写java对象的主键，keyColumn是表主键)-->
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into users(login, passwd, name, type, status)
+        values (#{login}, #{passwd}, #{name}, #{type}, #{status})
+    </insert>
+
+    <insert id="insertUser1" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO users
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="login!=null and login!=''">
+                login,
+            </if>
+            <if test="name!=null and name!=''">
+                name,
+            </if>
+            <if test="passwd!=null and passwd!=''">
+                passwd,
+            </if>
+            <if test="type !=null">
+                'type',
+            </if>
+            <if test="status !=null">
+                'status'
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="login!=null and login!=''">
+                #{login},
+            </if>
+            <if test="name!=null and name!=''">
+                #{name},
+            </if>
+            <if test="passwd!=null and passwd!=''">
+                #{passwd},
+            </if>
+            <if test="type !=null">
+                #{type},
+            </if>
+            <if test="status !=null">
+                #{status}
+            </if>
+        </trim>
+    </insert>
+
+
+    <!--    删除-->
+    <delete id="delUserById">
+        delete
+        from users
+        where id = #{id}
+    </delete>
+
+    <!-- 修改-->
+    <update id="updateUser">
+        update users
+        set login =#{login},
+            name=#{name},
+            type=#{type},
+            status=#{status}
+        where id = #{id}
+    </update>
+
+    <!--    动态sql语句-->
+    <update id="updateUser1">
+        UPDATE users a
+        <set>
+            a.login = #{login},
+            <if test="name!=null and name!=''">
+                a.name=#{name},
+            </if>
+            <if test="type !=null">
+                a.'type'=#{type},
+            </if>
+            <if test="status !=null">
+                a.'status'=#{status}
+            </if>
+        </set>
+        WHERE a.id=#{id}
+    </update>
+
+    <select id="getUserByCondition" parameterType="com.qst.pojo.User" resultType="com.qst.pojo.User">
+        select
+        <include refid="selectWithLastLogin"/>
+        from users u
+        <where>
+            1 = 1
+            <if test="id!=null and id!=0">
+                and u.id=#{id}
+            </if>
+            <if test="login!=null and login!=''">
+                and u.login=#{login}
+            </if>
+            <if test="name!=null and name!=''">
+                and u.name=#{name}
+            </if>
+            <if test="passwd!=null and passwd!=''">
+                and u.passwd=#{passwd}
+            </if>
+            <if test="type !=null">
+                and u.'type'=#{type}
+            </if>
+            <if test="status !=null">
+                and u.'status'=#{status}
+            </if>
+            <if test="lastLogin !=null">
+                and u.'last_login'=#{lastLogin}
+            </if>
+        </where>
+    </select>
+
+
+    <update id="updateLastLogin">
+        update users set last_login=#{lastLogin} where id=#{id}
+    </update>
+
+    <select id="getUserByIds" resultType="com.qst.pojo.User">
+        select
+        <include refid="selectWithLastLogin"/>
+        from users a where a.id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+
+</mapper>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace 指定该mapper文件描述的是那个java接口文件
+    这里填写的是UserDao接口文件的全类名
+-->
+<!-- resultType和resultMap区别：如果是只返回一个返回值（String或int）用resultType就行，列名个和实体类不一致，又不起别名，就用resultMap
+-->
+<mapper namespace="com.qst.mapper.TestPersonnelMapper">
+
+    <sql id="BaseSelect">
+        SELECT
+            users.id AS id,
+            login,
+            name,
+            passwd,
+            type,
+            status,
+            last_login,
+            phone,
+            gender,
+            email,
+            birthdate,
+            team_id
+        FROM
+            users
+                JOIN
+            testPersonnel ON users.id = testPersonnel.id
+    </sql>
+
+<!--  TestPersonnelMap映射嵌套UsersMap -->
+    <resultMap id="UsersMap" type="com.qst.pojo.User">
+        <id column="id" property="id"/>
+        <result column="login" property="login"/>
+        <result column="name" property="name"/>
+        <result column="passwd" property="passwd"/>
+        <result column="type" property="type"/>
+        <result column="status" property="status"/>
+        <result column="last_login" property="lastLogin"/>
+    </resultMap>
+
+    <resultMap id="TestPersonnelMap" type="com.qst.pojo.TestPersonnel">
+        <id column="id" property="id"/>
+        <result column="gender" property="gender"/>
+        <result column="phone" property="phone"/>
+        <result column="birthdate" property="birthdate"/>
+        <result column="team_id" property="teamId"/>
+        <association property="user" javaType="com.qst.pojo.User" resultMap="UsersMap"/>
+    </resultMap>
+
+    <select id="findById" parameterType="int" resultMap="TestPersonnelMap">
+        SELECT *
+        FROM testPersonnel
+        WHERE id = #{id}
+    </select>
+
+
+    <select id="findByTeamId" resultType="com.qst.pojo.TestPersonnel">
+        select *
+        from testpersonnel
+        where team_id = #{teamId}
+    </select>
+
+    <select id="query" parameterType="map" resultMap="TestPersonnelMap">
+        <include refid="BaseSelect" />
+        WHERE team_id=#{teamId}
+        <if test="name != null and !name.isEmpty()">
+            AND name = #{name}
+        </if>
+        <if test="phone != null and !phone.isEmpty()">
+            AND phone = #{phone}
+        </if>
+    </select>
+
+
+    <insert id="addTestPersonnel" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into testPersonnel(id,phone, gender, birthdate, team_id)
+        values (#{id},#{phone}, #{gender}, #{birthdate}, #{teamId})
+    </insert>
+
+
+    <update id="updateTestPersonnel">
+        update testPersonnel
+        set phone=#{phone},
+            gender=#{gender},
+            birthdate=#{birthdate}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTestPersonnel">
+        delete
+        from testPersonnel
+        where id = #{id}
+    </delete>
+
+    <select id="findByPhone" parameterType="map" resultMap="TestPersonnelMap">
+        <include refid="BaseSelect" />
+        WHERE phone=#{phone}
+    </select>
+
+</mapper>

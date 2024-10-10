@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context
+          https://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/mvc
+            https://www.springframework.org/schema/mvc/spring-mvc.xsd">
+   <!-- 开启组件扫描 让springmvc扫描@Controller -->
+    <context:component-scan base-package="com.qst.controller" />
+    <!-- 启动spring mvc相关注解的解释 -->
+    <mvc:annotation-driven />
+    <!-- 配置内部资源视图解析器 -->
+    <bean id="resourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+    <!-- 配置静态资源-->
+    <!--mvc:resources 中 location属性 配置 webapp目录中的一个目录
+      mapping配置url样式
+      当浏览器访问 虚拟目录/js/层次下的任何url 这时spring mvc会在/js/目录中寻找相应的静态资源文件
+       能找到，返回该静态资源，找不到则返回404-->
+    <mvc:resources mapping="/res/**" location="/res/" />
+    <mvc:resources mapping="/css/**" location="/css/" />
+
+    <!-- 配置处理文件上传(MultipartFile)的解析器
+      这里bean的id只能是multipartResolver
+    -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 这里配置最大上传文件的大小限制，5M-->
+        <property name="maxUploadSize" value="5000000" />
+    </bean>
+
+</beans>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!-- settings标签用于配置mybatis -->
+    <settings>
+        <!-- cacheEnabled用于配置缓存 默认值就是true -->
+        <setting name="cacheEnabled" value="true"/>
+    </settings>
+    <!-- 类型别名的标签，定义java类型的别名-->
+    <typeAliases>
+<!--        <typeAlias type="com.hqyj.zjc.pojo.Employee" alias="Employee" />-->
+    </typeAliases>
+
+</configuration>

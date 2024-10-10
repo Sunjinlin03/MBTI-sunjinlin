@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qst.mapper.TeamMapper">
+
+    <!-- Result Mapping for Team -->
+    <resultMap id="teamResultMap" type="com.qst.pojo.Team">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="beginYear" column="begin_year"/>
+        <result property="status" column="status"/>
+        <result property="creatorId" column="creator_id"/>
+    </resultMap>
+
+    <!-- Find by ID -->
+    <select id="findById" parameterType="int" resultMap="teamResultMap">
+        SELECT * FROM class_teams WHERE id = #{teamId}
+    </select>
+
+    <!-- Find by Creator -->
+    <select id="findByCreator" parameterType="int" resultMap="teamResultMap">
+        SELECT id, name, begin_year, status, creator_id
+        FROM class_teams
+        WHERE creator_id = #{creatorId}
+    </select>
+
+    <!-- Find all -->
+    <select id="findAll" resultMap="teamResultMap">
+        SELECT id, name, begin_year, status, creator_id
+        FROM class_teams
+    </select>
+
+    <!-- Insert a Team -->
+    <insert id="save" parameterType="com.qst.pojo.Team" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO class_teams (name, begin_year, status, creator_id)
+        VALUES (#{name}, #{beginYear}, #{status}, #{creatorId})
+    </insert>
+
+    <!-- Update a Team -->
+    <update id="update" parameterType="com.qst.pojo.Team">
+        UPDATE class_teams
+        SET name = #{name}, begin_year = #{beginYear}, status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <!-- Delete a Team by ID -->
+    <delete id="delete" parameterType="int" >
+        DELETE FROM class_teams WHERE id = #{id}
+    </delete>
+
+</mapper>

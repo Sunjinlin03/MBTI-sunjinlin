@@ -1,0 +1,36 @@
+@CHARSET "UTF-8";
+.imgtable{
+	width: 90%;
+	border: solid;
+	border-width: 2px;
+	border-radius: 5px;
+}
+.imgtable th{
+	text-align: center;
+	border:solid;
+	border-width:0px 0px 1px 0px;
+	
+}
+.imgtable tr{
+	
+}
+.imgtable td{
+	text-align:center;
+	border:solid black;
+	border-width: 1px 2px 1px 2px;
+}
+
+.imgtable a{
+	text-decoration: none;
+	
+}
+a{
+	text-decoration: none;
+	color: #5494FF;
+}
+.wid{
+	width: 200px !important;
+	height: 30px !important;
+	float: left;
+	margin-left: 10px;
+}

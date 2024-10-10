@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namspace 指定该mapper文件描述的是那个java接口文件
+    这里填写的是UserDao接口文件的全类名
+-->
+<mapper namespace="com.qst.mapper.ScheduleMapper">
+    <sql id = "selectWithSchedule">
+        id,begin_date,end_date,duration,status,creator_id,assessment_id,team_id,create_date,question_number
+    </sql>
+
+<resultMap id="scheduleMap" type="com.qst.pojo.Schedule">
+    <id   column="id" property="id"/>
+    <result column="begin_date" property="beginDate"/>
+    <result column="end_date" property="endDate"/>
+    <result column="duration" property="duration"/>
+    <result column="create_date" property="createDate"/>
+    <result column="status" property="status"/>
+    <result column="creator_id" property="creatorId"/>
+    <result column="assessment_id" property="assessmentId"/>
+    <result column="team_id" property="teamId"/>
+    <result column="question_number" property="questionNumber"/>
+</resultMap>
+
+    <select id="findByCreatorId" resultMap="scheduleMap">
+        select <include refid="selectWithSchedule"/>
+            from schedules where creator_id=#{creatorId} order by team_id,assessment_id
+    </select>
+
+    <select id="findById" resultMap="scheduleMap">
+        select <include refid="selectWithSchedule"/> from schedules where id = #{id}
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into schedules(
+            begin_date,
+            end_date,
+            duration,
+            create_date,
+            status,
+            creator_id,
+            assessment_id,
+            team_id,
+            question_number
+        )values(
+            #{beginDate}, #{endDate}, #{duration}, #{createDate}, #{status}, #{creatorId}, #{assessmentId}, #{teamId}, #{questionNumber})
+    </insert>
+    
+    <update id="update" parameterType="map">
+        UPDATE schedules a
+        SET begin_date = #{beginDate},
+            end_date = #{endDate},
+            duration = #{duration},
+            create_date = #{createDate},
+            status = #{status},
+            assessment_id = #{assessmentId},
+            team_id = #{teamId},
+            question_number = #{questionNumber}
+        WHERE a.id = #{id}
+    </update>
+    <delete id="delete">
+        delete from schedules where id=#{id}
+    </delete>
+
+    <select id="findByTeamId" resultMap="scheduleMap">
+        select  <include refid="selectWithSchedule"/> from schedules where team_id=#{teamId} order by id desc
+    </select>
+</mapper>

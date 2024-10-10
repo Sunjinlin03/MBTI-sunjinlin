@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namspace 指定该mapper文件描述的是那个java接口文件
+    这里填写的是UserDao接口文件的全类名
+-->
+<mapper namespace="com.qst.mapper.AssessmentMapper">
+
+    <resultMap id="bassMap" type="com.qst.pojo.AssessmentType">
+        <id column="id" property="id"></id>
+        <result column="title" property="title"></result>
+        <result column="cost" property="cost"></result>
+        <result column="status" property="status"></result>
+    </resultMap>
+
+    <sql id="selectNo">
+        id,title,cost,status
+    </sql>
+
+    <sql id="selectNoWith">
+        id,login,name,passwd,type,status,lastLogin
+    </sql>
+
+
+
+    <select id="findAllAssessment" resultMap="bassMap">
+        select <include refid="selectNo" /> from assessments
+    </select>
+
+    <select id="findById" resultMap="bassMap">
+        select * from assessments
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <select id="findByLogin" resultMap="bassMap">
+        select * from users
+        <where>
+            <if test ="login != null and login != ''">
+                and login = #{login}
+            </if>
+        </where>
+    </select>
+
+
+    <update id="update">
+        update assessments
+        <set>
+            <if test ="title != null and title != ''">
+                title = #{title},
+            </if>
+            <if test ="cost !=null and cost != ''">
+                cost = #{cost},
+            </if>
+            <if test ="status != null and status != ''">
+                status = #{status},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+    <!--  useGeneratedKeys是否启用Id生成规则并回填ID, keyProperty填写java对象的主键，keyColumn是表主键 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into assessments(title,cost,status)
+        values (#{title},#{cost},#{status})
+    </insert>
+
+    <delete id="deleted">
+        delete from assessments where id = #{id}
+    </delete>
+
+</mapper>

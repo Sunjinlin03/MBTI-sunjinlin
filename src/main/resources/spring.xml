@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context
+          https://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/tx
+            http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
+    <!-- 启动spring框架对注解的支持， 扫描base-package当中@Service注解的组件-->
+    <context:component-scan base-package="com.qst">
+        <!-- 排除@Controller注解，该注解注解的类让Spring mvc 的ioc容器处理-->
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <!-- 加载properties文件-->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:jdbc.properties" />
+    </bean>
+    <!-- 配置数据源，commons-dbcp -->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <!-- 连接数据的4个参数 这里的value引用的jdbc.properties文件的中property-->
+        <property name="driverClassName" value="${driver}" />
+        <property name="url" value="${url}" />
+        <property name="username" value="${username}" />
+        <property name="password" value="${password}" />
+    </bean>
+    <!-- spring整合mybatis的核心bean -->
+    <bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 引用dbcp数据源-->
+        <property name="dataSource" ref="dataSource" />
+        <!-- mybatis映射文件所在位置 ,这里使用*.xml表示mapper目录中所有的映射文件 -->
+        <property name="mapperLocations" value="classpath:mapper/*.xml" />
+        <!-- configLocation配置的mybatis配置文件所在地-->
+        <property name="configLocation" value="classpath:mybatis-config.xml" />
+        <!-- 配置mybatis的分页插件 -->
+        <property name="plugins">
+            <array>
+                <bean class="com.github.pagehelper.PageInterceptor" />
+            </array>
+        </property>
+    </bean>
+    <!-- MapperScannerConfigurer作用扫描dao接口文件，将mybatis生成的dao代理对象加入ioc容器中-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- 该处配置的是SqlSessionFactoryBean的名称-->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryBean" />
+        <!-- 该处配置的是dao层的java接口文件所在包-->
+        <property name="basePackage" value="com.qst.mapper" />
+    </bean>
+</beans>

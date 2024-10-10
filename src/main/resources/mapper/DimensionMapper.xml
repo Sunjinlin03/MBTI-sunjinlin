@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namspace 指定该mapper文件描述的是那个java接口文件
+    这里填写的是UserDao接口文件的全类名
+-->
+<mapper namespace="com.qst.mapper.DimensionMapper">
+
+    <resultMap id="bassMap" type="com.qst.pojo.PersonalityDimension">
+        <id column="id" property="id"></id>
+        <result column="title" property="title"></result>
+        <result column="depict" property="depict"></result>
+        <result column="assessmentId" property="assessmentId"></result>
+    </resultMap>
+
+    <sql id="selectNo">
+        id,title,depict,assessment_id
+    </sql>
+
+
+
+    <select id="findAllByAssessment" resultMap="bassMap">
+        select <include refid="selectNo" /> from personality_dimension where assessment_id = #{assessmentId}
+    </select>
+
+    <select id="findById" resultMap="bassMap">
+        select * from personality_dimension
+        <where>
+            <if test="id != null and id !=''">
+                and id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <select id="findByLogin" resultMap="bassMap">
+        select * from users
+        <where>
+            <if test ="login != null and login != ''">
+                and login = #{login}
+            </if>
+        </where>
+    </select>
+    <select id="findByIdAssessmentIdAndTitle" resultMap="bassMap">
+        select * from personality_dimension
+        <where>
+            <if test="id != null and id !=''">
+                and id = #{id}
+            </if>
+            <if test="title != null and title != ''">
+                and title = #{title}
+            </if>
+        </where>
+    </select>
+    <select id="findAllDimension" resultType="com.qst.pojo.PersonalityDimension">
+        select <include refid="selectNo" /> from personality_dimension
+    </select>
+
+
+    <update id="update" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        update personality_dimension
+        <set>
+            <if test ="title != null and title != ''">
+                title = #{title},
+            </if>
+            <if test ="depict !=null and depict != ''">
+                depict = #{depict},
+            </if>
+            <if test ="assessmentId != null and assessmentId != ''">
+                assessmentId = #{assessmentId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+    <!--  useGeneratedKeys是否启用Id生成规则并回填ID, keyProperty填写java对象的主键，keyColumn是表主键 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into personality_dimension(title,depict,assessment_id)
+        values (#{title},#{depict},#{assessmentId})
+    </insert>
+
+    <delete id="deleted">
+        delete from personality_dimension where id = #{id}
+    </delete>
+
+</mapper>
